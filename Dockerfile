@@ -10,13 +10,13 @@ MAINTAINER Tobias Meissner "meissner.t@googlemail.com"
 RUN apt-get update &&  apt-get upgrade -y && apt-get dist-upgrade -y 
 
 # install some system tools
-RUN apt-get install -y g++ make wget
+RUN apt-get install -y g++ make wget zlib1g-dev
 
 #--------------STAR ALIGNER ----------------------------------------------------------------------------------------------#
 # https://github.com/alexdobin/STAR
 
 RUN cd /opt && \
-    wget -c -P /star https://github.com/alexdobin/STAR/archive/STAR_2.4.2a.tar.gz && \
+    wget -c -P /opt/star https://github.com/alexdobin/STAR/archive/STAR_2.4.2a.tar.gz && \
     tar -xzf /opt/star/STAR_2.4.2a.tar.gz -C /opt/star && \
     make STAR -C /opt/star/STAR-STAR_2.4.2a/source
     
@@ -33,10 +33,9 @@ CMD ["/bin/bash"]
 #Clean up APT when done.
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
-    apt-get remove -y asciidoc && \
     apt-get autoclean && \
     apt-get autoremove -y && \
     rm -rf /var/lib/{apt,dpkg,cache,log}/ 
     
 #Add star to PATH
-PATH=$PATH:/opt/star/STAR-STAR_2.4.2a/bin
+ENV PATH /opt/star/STAR-STAR_2.4.2a/bin/Linux_x86_64:$PATH
